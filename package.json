@@ -1,19 +1,15 @@
 {
   "name": "ar-back",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pvnkrockjesvs/ar-back.git"
-  },
-  "author": "pvnkrockjesvs",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pvnkrockjesvs/ar-back/issues"
-  },
-  "homepage": "https://github.com/pvnkrockjesvs/ar-back#readme"
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1"
+  }
 }
