@@ -49,4 +49,20 @@ router.post('/signin', (req, res) => {
   })
 })
 
+router.post('/update', (req, res) => {
+  const hash = bcrypt.hashSync(req.body.password, 10);
+
+  if (!checkBody(req.body, ["email", "password"])) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+
+  User.updateOne({ token : req.body.token }, {
+    email: req.body.email,
+    password: hash,
+  }).then((user) => {
+    res.json({ result: true, token: user.token, username: user.username })
+  })
+})
+
 module.exports = router;

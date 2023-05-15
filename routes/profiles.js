@@ -29,7 +29,7 @@ router.post('/create', async(req,res) => {
    })
 })
 
-router.get('/', async(req, res) => {
+router.get('/', (req, res) => {
    User.findOne({ token: req.body.token }).then((user) => {
       Profile.findOne({ user: user.id}).then((profile) => {
          if (profile === null) {
@@ -37,6 +37,19 @@ router.get('/', async(req, res) => {
          } else {
             res.json({result: true, profile})
          }
+      })
+   })
+})
+
+router.post('/update', async(req,res) => {   
+   User.findOne({ token: req.body.token }).then((user) => {
+      Profile.updateOne({ user: user.id }, {
+         avatar: req.body.avatar,
+         newsletter: req.body.newsletter,
+         genres: req.body.genres,
+         releaseTypes: req.body.releaseTypes,
+      }).then((profile) => {
+         res.json({ result: true, profile })
       })
    })
 })

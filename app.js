@@ -7,6 +7,7 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var profilesRouter = require('./routes/profiles');
+var artistsRouter = require('./routes/artists');
 
 
 var app = express();
@@ -23,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/profiles', profilesRouter);
-
+app.use('/artists', artistsRouter);
 
 
 
