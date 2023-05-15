@@ -8,8 +8,6 @@ const { checkBody } = require("../modules/checkBody");
 const User = require("../models/users");
 
 
-uid2(32);
-
 router.post('/signup', (req, res) => {
   if (!checkBody(req.body, ["username", "password", "email"])) {
     res.json({ result: false, error: "Missing or empty fields" });
@@ -36,5 +34,19 @@ router.post('/signup', (req, res) => {
   })
 })
 
+router.post('/signin', (req, res) => {
+  if (!checkBody(req.body, ["username", "password"])) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+
+  User.findOne({ username: req.body.username }).then((user) => {
+    if (user && bcrypt.compareSync(req.body.password, user.password)) {
+      res.json({ result: true, token: user.token, username: user.username})
+    } else {
+      res.json({ result: false, error: "Wrong username/password"})
+    }
+  })
+})
 
 module.exports = router;
