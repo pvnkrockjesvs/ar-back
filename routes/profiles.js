@@ -22,7 +22,7 @@ router.post('/create', async(req,res) => {
                isPremium: req.body.isPremium
             })
             newProfile.save().then((profile) => {
-               res.json(profile)
+               res.json({result: true, profile})
             })
          }
       })
@@ -30,13 +30,15 @@ router.post('/create', async(req,res) => {
 })
 
 router.get('/', async(req, res) => {
-   const profile = await Profile.findOne()
-   .populate({
-      path: 'user', 
-      name:  req.body.token })
-
-   res.json({result: true, profile})
-
+   User.findOne({ token: req.body.token }).then((user) => {
+      Profile.findOne({ user: user.id}).then((profile) => {
+         if (profile === null) {
+            res.json({result: false, error: 'No profile found'})
+         } else {
+            res.json({result: true, profile})
+         }
+      })
+   })
 })
 
 module.exports = router;
