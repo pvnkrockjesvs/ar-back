@@ -1,13 +1,16 @@
 var express = require('express');
 require("../models/connection");
-
 var router = express.Router();
+const Profile = require("../models/profiles");
+const User = require("../models/users");
 const Artist = require("../models/artists");
 
-const url = 'http://musicbrainz.org/ws/2/'
 
 const lastapi = process.env.LASTFM_API
-router.get('/:mbid', async (req, res) => {
+const url = 'http://musicbrainz.org/ws/2/'
+
+/* fetch info artist */
+router.get('/:mbid', (req, res) => {
    fetch(url+`artist/${req.params.mbid}?fmt=json`)
    .then(response => response.json()).then((artist) => {
       fetch(`http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.name}&api_key=${lastapi}&format=json`)
@@ -26,7 +29,8 @@ router.get('/:mbid', async (req, res) => {
    })
 })
 
-router.get('/:mbid/lastalbum', async (req, res) => {
+/* fetch info last album */
+router.get('/:mbid/lastalbum', (req, res) => {
    fetch(url+`release-group?artist=${req.params.mbid}&type=album|ep&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
@@ -57,7 +61,8 @@ router.get('/:mbid/lastalbum', async (req, res) => {
    })
 }) 
 
-router.get('/:mbid/:type', async (req, res) => {
+/** fetch info release **/
+router.get('/:mbid/:type', (req, res) => {
    fetch(url+`release-group?artist=${req.params.mbid}&type=${req.params.type}&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
@@ -92,4 +97,47 @@ router.get('/:mbid/:type', async (req, res) => {
    })
 }) 
 
+router.post('/', (req, res) => {
+   fetch(url+`artist/${req.body.mbid}?fmt=json`)
+   .then(response => response.json()).then((artist) => {
+      Artist.findOne({ mbid: req.body.mbid }).then((dbartist) => {
+         if (dbartist == null) {
+            const newArtist = new Artist({ mbid: req.body.mbid, name: artist.name})
+
+            newArtist.save().then((newdbartist) => {
+               User.findOne({ token: req.body.token }).then((user) => {
+                  Profile.updateOne({ user: user.id }, {
+                     $push: { artists: newdbartist.id }
+                  }).then((profile) => {
+                     res.json({ result: true, profile })
+                  })
+               })
+            })
+         } else {
+            User.findOne({ token: req.body.token }).then((user) => {
+               Profile.updateOne({ user: user.id }, {
+                  $addToSet: { artists: dbartist.id }
+               }).then((profile) => {
+                  res.json({ result: true, profile })
+               })
+            })
+         }
+      })
+   })
+})
+
+router.delete('/', (req, res) => {
+   fetch(url+`artist/${req.body.mbid}?fmt=json`)
+   .then(response => response.json()).then((artist) => {
+      Artist.findOne({ mbid: req.body.mbid }).then((dbartist) => {
+         User.findOne({ token: req.body.token }).then((user) => {
+            Profile.updateOne({ user: user.id }, {
+               $pull: { artists: dbartist.id }
+            }).then((profile) => {
+               res.json({ result: true, profile })
+            })
+         })
+      })
+   })
+})
 module.exports = router;  
