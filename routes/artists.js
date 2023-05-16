@@ -24,8 +24,8 @@ router.get('/:mbid', async (req, res) => {
    })
 })
 
-router.get('/:mbid/:type', async (req, res) => {
-   fetch(`http://musicbrainz.org/ws/2/release-group?artist=${req.params.mbid}&type=${req.params.type}&limit=100&fmt=json`)
+router.get('/:mbid/albums', async (req, res) => {
+   fetch(`http://musicbrainz.org/ws/2/release-group?artist=${req.params.mbid}&type=album&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
          if (datagroup['secondary-types'].length == 0) {
@@ -37,24 +37,93 @@ router.get('/:mbid/:type', async (req, res) => {
                if (data.releases.length > 0 && rel.media.length>0 ) {
                   rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
 
-                  const newAlbum = {
-                     release: rel.date,
-                     title: datagroup.title,
-                     id: rel.id,
-                     length: releaseLength,
-                     numberTracks: rel.media[0]['track-count']
-                  }
-                  return newAlbum      
+                  if (releaseLength > 0) {
+                     const newAlbum = {
+                        date: rel.date,
+                        title: datagroup.title,
+                        id: rel.id,
+                        length: releaseLength,
+                        numberTracks: rel.media[0]['track-count']
+                     }
+                     return newAlbum    
+                  }  
                }
             }) 
          }
       })).then(data => { 
-         data.sort(function(a,b){ return new Date(a.release) - new Date(b.release)})
+         data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
          data = data.filter( Boolean ); // removes undefined
          res.json({result: true, releases: data})
       })
 
    })
 }) 
- 
+
+router.get('/:mbid/eps', async (req, res) => {
+   fetch(`http://musicbrainz.org/ws/2/release-group?artist=${req.params.mbid}&type=ep&limit=100&fmt=json`)
+   .then(response => response.json()).then((mbalbums) => {
+      return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
+         if (datagroup['secondary-types'].length == 0) {
+            return fetch(`http://musicbrainz.org/ws/2/release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
+            .then(response => response.json()).then((data) => {
+               const rel = data.releases[0]
+               let releaseLength = 0 
+
+               if (data.releases.length > 0 && rel.media.length>0 ) {
+                  rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
+
+                  if (releaseLength > 0) {
+                     const newAlbum = {
+                        date: rel.date,
+                        title: datagroup.title,
+                        id: rel.id,
+                        length: releaseLength,
+                        numberTracks: rel.media[0]['track-count']
+                     }
+                     return newAlbum    
+                  }  
+               }
+            }) 
+         }
+      })).then(data => { 
+         data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
+         data = data.filter( Boolean ); // removes undefined
+         res.json({result: true, releases: data})
+      })
+
+   })
+}) 
+
+router.get('/:mbid/lastalbum', async (req, res) => {
+   fetch(`http://musicbrainz.org/ws/2/release-group?artist=${req.params.mbid}&type=album|ep&limit=100&fmt=json`)
+   .then(response => response.json()).then((mbalbums) => {
+      return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
+         if (datagroup['secondary-types'].length == 0) {
+            return fetch(`http://musicbrainz.org/ws/2/release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
+            .then(response => response.json()).then((data) => {
+               const rel = data.releases[0]
+               let releaseLength = 0 
+
+               if (data.releases.length > 0 && rel.media.length>0 ) {
+                  rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
+
+                  if (releaseLength > 0) {
+                     return fetch(`http://coverartarchive.org/release-group/${datagroup.id}?fmt=json`)
+                     .then(response => response.json()).then((data) => {
+                        return ({cover : data.images[0].image, date: datagroup['first-release-date'], title: datagroup.title})
+                     })
+                  }
+               }
+            }) 
+         }
+      })).then(data => { 
+         data.sort(function(a,b){ return new Date(b.date) - new Date(a.date)})
+         data = data.slice( 0, 1 ); // removes undefined
+         res.json({result: true, releases: data})
+      })
+
+   })
+}) 
+
+
 module.exports = router;  
