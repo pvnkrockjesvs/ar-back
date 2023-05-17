@@ -63,38 +63,47 @@ router.get('/:mbid/lastalbum', (req, res) => {
 
 /** fetch info release **/
 router.get('/:mbid/:type', (req, res) => {
-   fetch(url+`release-group?artist=${req.params.mbid}&type=${req.params.type}&limit=100&fmt=json`)
+
+   fetch(url+`release-group?artist=${req.params.mbid}&type=${req.params.type}&limit=100&inc=releases&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
-      return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
-         if (datagroup['secondary-types'].length == 0) {
-            return fetch(url+`release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
-            .then(response => response.json()).then((data) => {
-               const rel = data.releases[0]
-               let releaseLength = 0 
-
-               if (data.releases.length > 0 && rel.media.length>0 ) {
-                  rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
-
-                  if (releaseLength > 0) {
-                     const newAlbum = {
-                        date: rel.date,
-                        title: datagroup.title,
-                        id: rel.id,
-                        length: releaseLength,
-                        numberTracks: rel.media[0]['track-count']
-                     }
-                     return newAlbum    
-                  }  
-               }
-            }) 
-         }
-      })).then(data => { 
-         data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
-         data = data.filter( Boolean ); // removes undefined
-         res.json({result: true, releases: data})
-      })
-
+      res.json(mbalbums)
    })
+
+   http://musicbrainz.org/ws/2/release-group/?query=arid:f59c5520-5f46-4d2c-b2c4-822eabf53419 AND status:official AND primarytype:album&fmt=json&inc=releases+recordings
+   
+   
+   // fetch(url+`release-group?artist=${req.params.mbid}&type=${req.params.type}&limit=100&fmt=json`)
+   // .then(response => response.json()).then((mbalbums) => {
+   //    return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
+   //       if (datagroup['secondary-types'].length == 0) {
+   //          return fetch(url+`release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
+   //          .then(response => response.json()).then((data) => {
+   //             const rel = data.releases[0]
+   //             let releaseLength = 0 
+
+   //             if (data.releases.length > 0 && rel.media.length>0 ) {
+   //                rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
+
+   //                if (releaseLength > 0) {
+   //                   const newAlbum = {
+   //                      date: rel.date,
+   //                      title: datagroup.title,
+   //                      id: rel.id,
+   //                      length: releaseLength,
+   //                      numberTracks: rel.media[0]['track-count']
+   //                   }
+   //                   return newAlbum    
+   //                }  
+   //             }
+   //          }) 
+   //       }
+   //    })).then(data => { 
+   //       data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
+   //       data = data.filter( Boolean ); // removes undefined
+   //       res.json({result: true, releases: data})
+   //    })
+
+   // })
 }) 
 
 /* follow an artist */

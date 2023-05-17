@@ -54,8 +54,8 @@ router.post('/update', (req,res) => {
    })
 })
 
-router.get('/artists', (req, res) => {
-   User.findOne({ token: req.body.token }).then((user) => {
+router.get('/myartists/:token', (req, res) => {
+   User.findOne({ token: req.params.token }).then((user) => {
       Profile.findOne({ user: user.id}).populate("artists").then((profile) => {
          if (profile.artists.length > 0) {
             const artists = profile.artists.map((data, i) => {
