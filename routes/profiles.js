@@ -7,6 +7,7 @@ const User = require("../models/users");
 
 router.post('/create', async(req,res) => {   
    User.findOne({ token: req.body.token }).then((user) => {
+      console.log('USER:', user)
       Profile.findOne({ user: user.id}).then((profile) => {
          if (profile === null) {
             const newProfile = new Profile({
