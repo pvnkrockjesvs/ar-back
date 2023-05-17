@@ -5,7 +5,7 @@ var router = express.Router();
 const Profile = require("../models/profiles");
 const User = require("../models/users");
 
-router.post('/create', async(req,res) => {   
+router.post('/create', (req,res) => {   
    User.findOne({ token: req.body.token }).then((user) => {
       Profile.findOne({ user: user.id}).then((profile) => {
          if (profile === null) {
@@ -41,7 +41,7 @@ router.get('/', (req, res) => {
    })
 })
 
-router.post('/update', async(req,res) => {   
+router.post('/update', (req,res) => {   
    User.findOne({ token: req.body.token }).then((user) => {
       Profile.updateOne({ user: user.id }, {
          avatar: req.body.avatar,
@@ -50,6 +50,21 @@ router.post('/update', async(req,res) => {
          releaseTypes: req.body.releaseTypes,
       }).then((profile) => {
          res.json({ result: true, profile })
+      })
+   })
+})
+
+router.get('/artists', (req, res) => {
+   User.findOne({ token: req.body.token }).then((user) => {
+      Profile.findOne({ user: user.id}).populate("artists").then((profile) => {
+         if (profile.artists.length > 0) {
+            const artists = profile.artists.map((data, i) => {
+               return ({ name: data.name, mbid: data.mbid })
+            })
+            res.json({ result: true, artists })
+         } else {
+            res.json({ result: true, error: 'No artists followed' })
+         }
       })
    })
 })

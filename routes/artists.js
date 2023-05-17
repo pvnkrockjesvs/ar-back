@@ -97,6 +97,7 @@ router.get('/:mbid/:type', (req, res) => {
    })
 }) 
 
+/* follow an artist */
 router.post('/', (req, res) => {
    fetch(url+`artist/${req.body.mbid}?fmt=json`)
    .then(response => response.json()).then((artist) => {
@@ -126,6 +127,7 @@ router.post('/', (req, res) => {
    })
 })
 
+/* unfollow an artist */
 router.delete('/', (req, res) => {
    fetch(url+`artist/${req.body.mbid}?fmt=json`)
    .then(response => response.json()).then((artist) => {

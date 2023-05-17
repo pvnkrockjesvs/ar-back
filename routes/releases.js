@@ -23,6 +23,7 @@ router.get('/:mbid', (req, res) => {
             date: release.date, 
             title: release.title,
             label: release['label-info'][0].label.name,
+            trackCount: release.media[0]['track-count'],
             genre: genre[0].name,
             tracks,
          })         
