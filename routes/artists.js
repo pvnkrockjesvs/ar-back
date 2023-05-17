@@ -54,7 +54,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
          }
       })).then(data => { 
          data.sort(function(a,b){ return new Date(b.date) - new Date(a.date)})
-         data = data.slice( 0, 1 ); // removes undefined
+         data = data.slice( 0, 1 ); 
          res.json({result: true, releases: data})
       })
 
