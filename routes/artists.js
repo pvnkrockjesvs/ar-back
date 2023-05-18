@@ -67,35 +67,35 @@ router.get('/:mbid/album', (req, res) => {
 
    // fetch(url+`release-group/?query=arid:${req.params.mbid} AND status:official AND primarytype:album ${sectype}&fmt=json&inc=releases+recordings`)
    // .then(response => response.json()).then((mbalbums) => {
-   //    // return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
-   //    //    return fetch(url+`release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
-   //    //    .then(response => response.json()).then((data, i) => {
-   //    //       if (data.error) {
-   //    //          console.log(data)
-   //    //       }
-   //    //       const rel = data.releases[0]
-   //    //       let releaseLength = 0 
+      // return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
+      //    return fetch(url+`release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
+      //    .then(response => response.json()).then((data, i) => {
+      //       if (data.error) {
+      //          console.log(data)
+      //       }
+      //       const rel = data.releases[0]
+      //       let releaseLength = 0 
 
-   //    //       if (data.releases.length > 0 && rel.media.length>0 ) {
-   //    //          rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
+      //       if (data.releases.length > 0 && rel.media.length>0 ) {
+      //          rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
 
-   //    //          if (releaseLength > 0) {
-   //    //             const newAlbum = {
-   //    //                date: rel.date,
-   //    //                title: datagroup.title,
-   //    //                id: rel.id,
-   //    //                length: releaseLength,
-   //    //                numberTracks: rel.media[0]['track-count']
-   //    //             }
-   //    //             return newAlbum    
-   //    //          }  
-   //    //       }
-   //    //    })     
-   //    // })).then(data => { 
-   //    //    data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
-   //    //    data = data.filter( Boolean ); // removes undefined
-   //    //    res.json({result: true, releases: data})
-   //    // })
+      //          if (releaseLength > 0) {
+      //             const newAlbum = {
+      //                date: rel.date,
+      //                title: datagroup.title,
+      //                id: rel.id,
+      //                length: releaseLength,
+      //                numberTracks: rel.media[0]['track-count']
+      //             }
+      //             return newAlbum    
+      //          }  
+      //       }
+      //    })     
+      // })).then(data => { 
+      //    data.sort(function(a,b){ return new Date(a.date) - new Date(b.date)})
+      //    data = data.filter( Boolean ); // removes undefined
+      //    res.json({result: true, releases: data})
+      // })
 
    //    const albums = {
    //       date: mbalbums['release-groups'].
