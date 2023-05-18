@@ -40,7 +40,8 @@ router.get('/:mbid/lastalbum', (req, res) => {
          }
       })
       album.sort(function(a,b){ 
-         return new Date(b['first-release-date']) - new Date(a['first-release-date'])})
+         return new Date(b['first-release-date']) - new Date(a['first-release-date'])
+      })
       album = album.slice( 0, 1 );
       fetch(`http://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
       .then(response => response.json()).then((data) => {
