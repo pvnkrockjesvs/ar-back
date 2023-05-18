@@ -31,34 +31,22 @@ router.get('/:mbid', (req, res) => {
 
 /* fetch info last album */
 router.get('/:mbid/lastalbum', (req, res) => {
-   fetch(url+`release-group?artist=${req.params.mbid}&type=album|ep&limit=100&fmt=json`)
+   fetch(url+`release-group?artist=${req.params.mbid}&type=album&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
-      return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
+
+      let album = mbalbums['release-groups'].map((datagroup, i) => {
          if (datagroup['secondary-types'].length == 0) {
-            return fetch(url+`release?release-group=${datagroup.id}&status=official&inc=recordings&limit=1&fmt=json`)
-            .then(response => response.json()).then((data) => {
-               const rel = data.releases[0]
-               let releaseLength = 0 
-
-               if (data.releases.length > 0 && rel.media.length>0 ) {
-                  rel.media[0].tracks.map((data, i) => { releaseLength += data.length })
-
-                  if (releaseLength > 0) {
-                     return fetch(`http://coverartarchive.org/release-group/${datagroup.id}?fmt=json`)
-                     .then(response => response.json()).then((data) => {
-                        return ({cover : data.images[0].image, date: datagroup['first-release-date'], title: datagroup.title})
-                     })
-                  }
-               }
-            }) 
+            return datagroup
          }
-      })).then(data => { 
-         data.sort(function(a,b){ return new Date(b.date) - new Date(a.date)})
-         data = data.slice( 0, 1 ); 
-         res.json({result: true, releases: data})
       })
-
-   })
+      album.sort(function(a,b){ 
+         return new Date(b['first-release-date']) - new Date(a['first-release-date'])})
+      album = album.slice( 0, 1 );
+      fetch(`http://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
+      .then(response => response.json()).then((data) => {
+         res.json({cover : data.images[0].image, date: album[0]['first-release-date'], title: album[0].title})
+      })
+    })
 }) 
 
 /** fetch info release **/
@@ -105,7 +93,6 @@ router.get('/:mbid/album', (req, res) => {
    // })
 
    // http://musicbrainz.org/ws/2/release-group/?query=arid:f59c5520-5f46-4d2c-b2c4-822eabf53419 AND status:official AND primarytype:album&fmt=json&inc=releases+recordings
-   
    
    fetch(url+`release-group?artist=${req.params.mbid}&type=album&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
