@@ -52,7 +52,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
          album = album.slice( 0, 1 );
          fetch(`http://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
          .then(response => response.json()).then((data) => {
-            res.json({cover : data.images[0].image, date: album[0]['first-release-date'], title: album[0].title})
+            res.json({cover : data.images[0].image, mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})
          })
       }
     })
@@ -218,6 +218,21 @@ router.delete('/', (req, res) => {
             res.json({ result: true, profile })
          })
       })
+   })
+})
+
+/* search for a artist */
+router.get('/search/:name', (req, res) => {
+   fetch(url+`artist/?query=${req.params.name}&fmt=json`)
+   .then(response => response.json()).then((artist) => {
+      if (artist.error) {
+         res.json({ result: false, error: artist.error})
+      } else {
+         const artists = artist.artists.map((data, i) => {
+            return ({name: data.name, disambiguation: data.disambiguation, mbid: data.id, ended: data['life-span'].ended})
+         })
+         res.json({ result: true, artists })
+      }
    })
 })
 module.exports = router;  
