@@ -29,8 +29,8 @@ router.post('/create', (req,res) => {
    })
 })
 
-router.get('/', (req, res) => {
-   User.findOne({ token: req.body.token }).then((user) => {
+router.post('/', (req, res) => {
+   User.findOne({ token: req.params.token }).then((user) => {
       Profile.findOne({ user: user.id}).then((profile) => {
          if (profile === null) {
             res.json({result: false, error: 'No profile found'})
