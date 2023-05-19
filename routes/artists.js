@@ -40,6 +40,8 @@ router.get('/:mbid/lastalbum', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
+      } else if (mbalbums['release-group-count'] == 0) {
+         res.json({ result: false, error: 'no albums' })
       } else {
          let album = mbalbums['release-groups'].map((datagroup, i) => {
             if (datagroup['secondary-types'].length == 0) {
@@ -52,7 +54,11 @@ router.get('/:mbid/lastalbum', (req, res) => {
          album = album.slice( 0, 1 );
          fetch(`http://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
          .then(response => response.json()).then((data) => {
-            res.json({cover : data.images[0].image, mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})
+            if (data) { 
+               res.json({cover : data.images[0].image, mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})
+            } else {
+               res
+            }
          })
       }
     })
@@ -107,6 +113,8 @@ router.get('/:mbid/album', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
+      } else if (mbalbums['release-group-count'] == 0) {
+         res.json({ result: false, error: 'no albums' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
             if (datagroup['secondary-types'].length == 0 && datagroup['first-release-date'] !== '') {
@@ -131,6 +139,8 @@ router.get('/:mbid/ep', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
+      } else if (mbalbums['release-group-count'] == 0) {
+         res.json({ result: false, error: 'no ep' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
             if (datagroup['secondary-types'].length == 0 && datagroup['first-release-date'] !== '') {
@@ -155,6 +165,8 @@ router.get('/:mbid/single', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
+      } else if (mbalbums['release-group-count'] == 0) {
+         res.json({ result: false, error: 'no single' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
             if (datagroup['secondary-types'].length == 0 && datagroup['first-release-date'] !== '') {
