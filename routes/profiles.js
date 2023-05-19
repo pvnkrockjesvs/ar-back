@@ -4,6 +4,8 @@ require("../models/connection");
 var router = express.Router();
 const Profile = require("../models/profiles");
 const User = require("../models/users");
+const Artist = require("../models/artists");
+const lastapi = process.env.LASTFM_API
 
 router.post('/create', (req,res) => {   
    User.findOne({ token: req.body.token }).then((user) => {
@@ -70,4 +72,64 @@ router.get('/myartists/:token', (req, res) => {
    })
 })
 
+const timer = ms => new Promise( res => setTimeout(res, ms));
+router.post('/import-last-fm', (req, res) => {
+   const body = req.body
+   const url = 'https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user='
+   fetch(url+body.user+`&api_key=${lastapi}&period=${body.period}&limit=${body.limit}&format=json`)
+   .then(response => response.json()).then(data => {
+      if (data.error) {
+         res.json({ result: false, error: data.error })
+      } else {
+         return Promise.all(data.topartists.artist.map((data, i) => {
+            if (data.playcount > Number(body.min) && data.mbid !== '') {
+               return Artist.findOne({ mbid: data.mbid }).then((dbartist) => {
+                  if (dbartist == null) {
+                     const newArtist = new Artist({ mbid: data.mbid, name: data.name})
+                     newArtist.save().then((newdbartist) => {
+                        return ({
+                           mbid: data.mbid,
+                           name: data.name,
+                           id: newdbartist.id
+                        })
+                     })
+                  } else {
+                     return ({
+                        mbid: data.mbid,
+                        name: data.name,
+                        id: dbartist.id
+                     })
+                  }
+               })
+               
+            } else if (data.playcount > Number(body.min) && data.mbid === '')   {
+               // fetch(`http://musicbrainz.org/ws/2/artist/?query=${data.name}&fmt=json`)
+               // .then(response => response.json()).then((mbartist) => {
+               //    if (mbartist.error) {
+               //       console.log("wait 3 seconds")
+               //       timer(3000).then(_=> fetch(`http://musicbrainz.org/ws/2/artist/?query=${data.name}&fmt=json`)
+               //       .then(response => response.json()).then((mbartist2) => {
+               //          console.log(mbartist2.artists[0].mbid)
+
+               //       }));
+               //    } else {
+               //       console.log(mbartist.artists[0].mbid)
+               //    }
+               // })
+            }         
+         })).then(data => {
+            data = data.filter( Boolean ); 
+            const artistSet = data.map((data,i) => { return data.id })
+            
+            User.findOne({ token: req.body.token }).then((user) => {
+               Profile.updateOne({ user: user.id }, {
+                  $addToSet: { artists: artistSet }
+               }).then((profile) => {
+                  res.json({ result: true, profile })
+               })
+            })
+         })
+      }
+   })
+})
 module.exports = router;
