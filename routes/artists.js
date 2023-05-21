@@ -53,7 +53,7 @@ router.get('/:mbid', (req, res) => {
 
 /* fetch info last album */
 router.get('/:mbid/lastalbum', (req, res) => {
-   fetch(url+`release-group?artist=${req.params.mbid}&type=album&limit=100&fmt=json`)
+   fetch(url+`release-group/?query=arid:${req.params.mbid} AND primarytype:album AND status:official&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
@@ -61,7 +61,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
          res.json({ result: false, error: 'no albums' })
       } else {
          let album = mbalbums['release-groups'].map((datagroup, i) => {
-            if (datagroup['secondary-types'].length == 0) {
+            if (!datagroup['secondary-types']  && datagroup['first-release-date'] !== ''  && datagroup['first-release-date']) {
                return datagroup
             }
          })
@@ -126,7 +126,7 @@ router.get('/:mbid/album', (req, res) => {
 
    // http://musicbrainz.org/ws/2/release-group/?query=arid:f59c5520-5f46-4d2c-b2c4-822eabf53419 AND status:official AND primarytype:album&fmt=json&inc=releases+recordings
    
-   fetch(url+`release-group?artist=${req.params.mbid}&type=album&limit=100&fmt=json`)
+   fetch(url+`release-group?query=arid:${req.params.mbid} AND primarytype:album AND status:official&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
@@ -134,7 +134,7 @@ router.get('/:mbid/album', (req, res) => {
          res.json({ result: false, error: 'no albums' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
-            if (datagroup['secondary-types'].length == 0 && datagroup['first-release-date'] !== '') {
+            if (!datagroup['secondary-types'] && datagroup['first-release-date'] !== ''  && datagroup['first-release-date']) {
                const album = {
                   title: datagroup.title,
                   mbid: datagroup.id,
@@ -152,7 +152,7 @@ router.get('/:mbid/album', (req, res) => {
 }) 
 
 router.get('/:mbid/ep', (req, res) => {
-   fetch(url+`release-group?artist=${req.params.mbid}&type=ep&limit=100&fmt=json`)
+   fetch(url+`release-group?query=arid:${req.params.mbid} AND primarytype:ep AND status:official&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
@@ -160,7 +160,7 @@ router.get('/:mbid/ep', (req, res) => {
          res.json({ result: false, error: 'no ep' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
-            if (datagroup['secondary-types'].length == 0 && datagroup['first-release-date'] !== '') {
+            if (!datagroup['secondary-types'] && datagroup['first-release-date'] !== '' && datagroup['first-release-date']) {
                const album = {
                   title: datagroup.title,
                   mbid: datagroup.id,
@@ -178,7 +178,7 @@ router.get('/:mbid/ep', (req, res) => {
 })
 
 router.get('/:mbid/single', (req, res) => {
-   fetch(url+`release-group?artist=${req.params.mbid}&type=single&limit=100&fmt=json`)
+   fetch(url+`release-group/?query=arid:${req.params.mbid} AND primarytype:single AND status:official&limit=100&fmt=json`)
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })

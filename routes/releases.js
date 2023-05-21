@@ -21,14 +21,16 @@ router.get('/:mbid', (req, res) => {
          })
          genre.sort(function(a,b){ return new Date(b.count) - new Date(a.count)})
          genre = genre.slice( 0, 1 )
+
+
          res.json({
-         date: releasegroup.releases[0].date, 
-         title: releasegroup.releases[0].title,
-         label: releasegroup.releases[0]['label-info'][0].label.name,
-         trackCount: releasegroup.releases[0].media[0]['track-count'],
-         genre: genre[0].name,
-         albumLength,
-         tracks,
+            date: releasegroup.releases[0].date, 
+            title: releasegroup.releases[0].title,
+            label: releasegroup.releases[0]['label-info'][0].label.name,
+            trackCount: releasegroup.releases[0].media[0]['track-count'],
+            genre: genre[0].name,
+            albumLength,
+            tracks,
          })         
       }
    })
