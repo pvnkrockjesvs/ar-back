@@ -10,7 +10,8 @@ const profileSchema = mongoose.Schema({
    rss: String,
    artists: { type : [{type: mongoose.Schema.Types.ObjectId, ref: 'artists'}], default: []},
    albums: { type : [{type: mongoose.Schema.Types.ObjectId, ref: 'albums'}], default: []},
-   user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'}
+   user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
+   conflicts: [String]
 })
 
 const Profile = mongoose.model('profiles', profileSchema);
