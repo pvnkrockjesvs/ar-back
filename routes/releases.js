@@ -5,7 +5,7 @@ const url = 'http://musicbrainz.org/ws/2/release?release-group='
 
 /* get the release with the RELEASE MBID */
 router.get('/:mbid', (req, res) => {
-   fetch(url+`${req.params.mbid}&inc=recordings+labels+genres+release-groups&limit=1&fmt=json`)
+   fetch(url+`${req.params.mbid}&inc=recordings+labels+genres+release-groups&status=official&limit=2&fmt=json`)
    .then(response => response.json())
    .then((releasegroup) => {
       if (releasegroup.error) {

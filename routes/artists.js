@@ -7,6 +7,7 @@ const Artist = require("../models/artists");
 
 
 const lastapi = process.env.LASTFM_API
+const fanartapi = process.env.FANART_API
 const url = 'http://musicbrainz.org/ws/2/'
 
 /* fetch info artist */
@@ -18,16 +19,32 @@ router.get('/:mbid', (req, res) => {
       } else {
          fetch(`http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.name}&api_key=${lastapi}&format=json`)
          .then(response => response.json()).then((lastfmartist) => {
-            const art = {
-            ended: artist['life-span'].ended,
-            name: artist.name,
-            bio: lastfmartist.artist.bio.summary,
-            image: lastfmartist.artist.image[2]['#text']
-            }
-   
-            if (artist !== null) { 
-               res.json({ result: true, art })
-            }
+            fetch(`http://webservice.fanart.tv/v3/music/${req.params.mbid}?api_key=`+fanartapi)
+            .then(response => response.json()).then((cover) => {
+               if(cover['error message']) {
+                  const art = {
+                     ended: artist['life-span'].ended,
+                     name: artist.name,
+                     bio: lastfmartist.artist.bio.summary,
+                     }
+            
+                     if (artist !== null) { 
+                        res.json({ result: true, art })
+                     }
+               } else {
+                  const art = {
+                     ended: artist['life-span'].ended,
+                     name: artist.name,
+                     bio: lastfmartist.artist.bio.summary,
+                     image: cover.artistbackground[0].url
+                     }
+            
+                     if (artist !== null) { 
+                        res.json({ result: true, art })
+                     }
+               }
+            })
+
          })
       }
       
