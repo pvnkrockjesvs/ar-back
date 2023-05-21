@@ -57,7 +57,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
-      } else if (mbalbums['release-group-count'] == 0) {
+      } else if (mbalbums.count == 0) {
          res.json({ result: false, error: 'no albums' })
       } else {
          let album = mbalbums['release-groups'].map((datagroup, i) => {
@@ -130,7 +130,7 @@ router.get('/:mbid/album', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
-      } else if (mbalbums['release-group-count'] == 0) {
+      } else if (mbalbums.count == 0) {
          res.json({ result: false, error: 'no albums' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
@@ -156,7 +156,7 @@ router.get('/:mbid/ep', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
-      } else if (mbalbums['release-group-count'] == 0) {
+      } else if (mbalbums.count == 0) {
          res.json({ result: false, error: 'no ep' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
@@ -182,7 +182,7 @@ router.get('/:mbid/single', (req, res) => {
    .then(response => response.json()).then((mbalbums) => {
       if (mbalbums.error) {
          res.json({ result: false, error: mbalbums.error })
-      } else if (mbalbums['release-group-count'] == 0) {
+      } else if (mbalbums.count == 0) {
          res.json({ result: false, error: 'no single' })
       } else {
          return Promise.all(mbalbums['release-groups'].map((datagroup, i) => {
