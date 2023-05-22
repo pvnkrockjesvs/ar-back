@@ -1,7 +1,12 @@
 var express = require('express');
+const Profile = require('../models/profiles');
 var router = express.Router();
-
+const Release = require('../models/releases');
+const Artist = require('../models/artists');
+const moment = require('moment')
 const url = 'http://musicbrainz.org/ws/2/release?release-group='
+const url2 = 'http://musicbrainz.org/ws/2/'
+
 
 /* get the release with the RELEASE MBID */
 router.get('/:mbid', (req, res) => {
@@ -34,5 +39,6 @@ router.get('/:mbid', (req, res) => {
       }
    })
 })
+
 
 module.exports = router;  

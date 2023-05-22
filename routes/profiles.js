@@ -63,7 +63,10 @@ router.get('/myartists/:token', (req, res) => {
             const artists = profile.artists.map((data, i) => {
                return ({ name: data.name, mbid: data.mbid })
             })
-            res.json({ result: true, artists })
+            const conflicts = profile.conflicts.map((data, i) => {
+               return ({ name: data })
+            })
+            res.json({ result: true, artists, conflicts })
          } else {
             res.json({ result: true, error: 'No artists followed' })
          }
@@ -71,7 +74,6 @@ router.get('/myartists/:token', (req, res) => {
    })
 })
 
-const timer = ms => new Promise( res => setTimeout(res, ms));
 router.post('/import-last-fm', (req, res) => {
    const body = req.body
    const url = 'https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user='

@@ -9,7 +9,7 @@ const profileSchema = mongoose.Schema({
    ical: String,
    rss: String,
    artists: { type : [{type: mongoose.Schema.Types.ObjectId, ref: 'artists'}], default: []},
-   albums: { type : [{type: mongoose.Schema.Types.ObjectId, ref: 'albums'}], default: []},
+   releases: { type : [{type: mongoose.Schema.Types.ObjectId, ref: 'releases'}], default: []},
    user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
    conflicts: [String]
 })
