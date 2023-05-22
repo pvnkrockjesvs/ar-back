@@ -9,7 +9,7 @@ const moment = require('moment')
 Artist.find().then((artists) => {
    let i = 0
 
-   setInterval(() => {
+   const interv = setInterval(() => {
       fetch(`http://musicbrainz.org/ws/2/release-group?query=arid:${artists[i].mbid} 
       AND status:official&limit=100&fmt=json`)
       .then(response => response.json()).then((mbalbums) => {
@@ -66,7 +66,7 @@ Artist.find().then((artists) => {
       if (i < artists.length) {
          i++                
       } else {
-         clearInterval(this)
+         clearInterval(interv)
       }
    }, 1000)
    

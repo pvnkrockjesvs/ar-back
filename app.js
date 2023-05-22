@@ -8,7 +8,6 @@ var usersRouter = require('./routes/users');
 var profilesRouter = require('./routes/profiles');
 var artistsRouter = require('./routes/artists');
 var releasesRouter = require('./routes/releases');
-const importScript = require("./importAlbums");
 
 var app = express();
 
@@ -26,8 +25,5 @@ app.use('/users', usersRouter);
 app.use('/profiles', profilesRouter);
 app.use('/artists', artistsRouter);
 app.use('/releases', releasesRouter);
-app.use('/importing', importScript);
-
-
 
 module.exports = app;

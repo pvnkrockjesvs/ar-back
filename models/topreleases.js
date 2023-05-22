@@ -5,10 +5,11 @@ const topreleasesSchema = mongoose.Schema({
    title: String,
    date: Date,
    arid: String,
-   arname: String,
+   artist: String,
    type: String,
    cover: String,
-
+   dbCount: Number,
+   trackCount: Number,
 })
 
 const TopRelease = mongoose.model( 'topreleases', topreleasesSchema )
