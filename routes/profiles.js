@@ -103,27 +103,22 @@ router.post('/import-last-fm', (req, res) => {
                })
                
             } else if (data.playcount > Number(body.min) && data.mbid === '')   {
-               // fetch(`http://musicbrainz.org/ws/2/artist/?query=${data.name}&fmt=json`)
-               // .then(response => response.json()).then((mbartist) => {
-               //    if (mbartist.error) {
-               //       console.log("wait 3 seconds")
-               //       timer(3000).then(_=> fetch(`http://musicbrainz.org/ws/2/artist/?query=${data.name}&fmt=json`)
-               //       .then(response => response.json()).then((mbartist2) => {
-               //          console.log(mbartist2.artists[0].mbid)
-
-               //       }));
-               //    } else {
-               //       console.log(mbartist.artists[0].mbid)
-               //    }
-               // })
+               console.log(data)
+               if (data.name != null && data.name !== '') {
+                  return {conflict : data.name}
+               }
             }         
          })).then(data => {
             data = data.filter( Boolean ); 
             const artistSet = data.map((data,i) => { return data.id })
+            const conflictSet = data.map((data,i) => { return data.conflict })
             
             User.findOne({ token: req.body.token }).then((user) => {
                Profile.updateOne({ user: user.id }, {
-                  $addToSet: { artists: artistSet }
+                  $addToSet: { 
+                     artists: artistSet,
+                     conflicts: conflictSet
+                  }
                }).then((profile) => {
                   res.json({ result: true, profile })
                })
