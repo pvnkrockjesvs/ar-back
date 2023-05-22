@@ -68,6 +68,6 @@ Artist.find().then((artists) => {
       } else {
          clearInterval(interv)
       }
-   }, 1000)
+   }, 700)
    
 })

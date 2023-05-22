@@ -54,9 +54,9 @@ TopRelease.deleteMany({}).then(
                      newtoprelease.save()                  
                   })
 
+                  i++
                }
             })
-            i++
          }, 2000)
       })
    })
