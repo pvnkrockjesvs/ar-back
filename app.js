@@ -3,12 +3,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var profilesRouter = require('./routes/profiles');
 var artistsRouter = require('./routes/artists');
 var releasesRouter = require('./routes/releases');
 var topreleasesRouter = require('./routes/topreleases');
+const TopReleases = require('./cron/topReleases')
 
 var app = express();
 
