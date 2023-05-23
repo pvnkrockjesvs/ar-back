@@ -28,6 +28,7 @@ function getToken() {
     .catch((error) => console.error(error));
 }
 
+//Route .post /spotify/album pour récupérer le lien spotify d'un album
 router.post("/spotify/album", async (req, res) => {
   await getToken();
   //Remplacer les espaces de la requete par %2520 avec une regex
