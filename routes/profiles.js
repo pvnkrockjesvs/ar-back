@@ -5,6 +5,7 @@ var router = express.Router();
 const Profile = require("../models/profiles");
 const User = require("../models/users");
 const Artist = require("../models/artists");
+const Release = require('../models/releases');
 const lastapi = process.env.LASTFM_API
 
 router.post('/create', (req,res) => {   
@@ -64,7 +65,10 @@ router.get('/myartists/:token', (req, res) => {
             const artists = profile.artists.map((data, i) => {
                return ({ name: data.name, mbid: data.mbid })
             })
-            res.json({ result: true, artists })
+            const conflicts = profile.conflicts.map((data, i) => {
+               return ({ name: data })
+            })
+            res.json({ result: true, artists, conflicts })
          } else {
             res.json({ result: true, error: 'No artists followed' })
          }
@@ -72,7 +76,25 @@ router.get('/myartists/:token', (req, res) => {
    })
 })
 
-const timer = ms => new Promise( res => setTimeout(res, ms));
+router.get('/myreleases/:token', (req, res) => {
+   User.findOne({ token: req.params.token }).then((user) => {
+      Profile.findOne({ user: user.id}).populate("artists").then((profile) => {
+         if (profile.artists.length > 0) {
+            return Promise.all(profile.artists.map((data, i) => {
+               return Release.find({ arid: data.mbid }).then(dbreleases => {
+                  if (dbreleases !== null) {
+                     return dbreleases
+                  }
+               })
+            })).then((data) => {
+               data = data.filter((releases) => releases.length > 0)
+               res.json({ result: true, data })
+            })
+         }
+      })
+   })
+})
+
 router.post('/import-last-fm', (req, res) => {
    const body = req.body
    const url = 'https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user='
