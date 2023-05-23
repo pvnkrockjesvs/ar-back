@@ -17,11 +17,11 @@ TopRelease.deleteMany({}).then(
    }})
    .then((release) => {
       return Promise.all(release.map((data, i) => {
-         if (data.type !== 'Single'){
+         if (data.type === 'Album' || data.type === 'EP'){
             return Artist.findOne({mbid: data.arid}).then((artist) => {
                if (artist) {
                   return Profile.find({artists: artist.id}).then((profile) => {
-                     return { album: data.mbid, count: profile.length, artist: artist.name, arid: artist.mbid} 
+                     return { album: data.mbid, type: data.type, title: data.title, date: data.date, count: profile.length, artist: artist.name, arid: artist.mbid} 
                   })         
                }
             })
@@ -32,31 +32,25 @@ TopRelease.deleteMany({}).then(
          data.slice(0, 14)
 
          let i = 0
-         const interv = setInterval(() => {
-            fetch(url+`${data[i].album}&inc=recordings+labels+genres+release-groups&status=official&limit=2&fmt=json`)
-            .then(response => response.json())
-            .then((releasegroup) => {
-               if (releasegroup.error) {
-                  console.log({result : true, error : releasegroup.error})
-               } else {   
-                  fetch(`http://coverartarchive.org/release-group/${data[i].album}?fmt=json`)
-                  .then(response => response.json()).then((cover) => {
-                     const newtoprelease = new TopRelease({
-                        date: releasegroup.releases[0].date, 
-                        title: releasegroup.releases[0].title,
-                        trackCount: releasegroup.releases[0].media[0]['track-count'],
-                        dbCount: data[i].count,
-                        artist: data[i].artist,
-                        arid: data[i].arid,
-                        cover: cover.images[0].thumbnails['500']
-                     })    
-                     
-                     newtoprelease.save()                  
-                  })
-
-                  i++
-               }
+         const interv = setInterval(async () => { 
+            await fetch(`http://coverartarchive.org/release-group/${data[i].album}?fmt=json`)
+               .then(response => response.json()).then((cover) => {
+               const newtoprelease = new TopRelease({
+                  mbid : data[i].album,
+                  date: data[i].date, 
+                  title: data[i].title,
+                  dbCount: data[i].count,
+                  artist: data[i].artist,
+                  arid: data[i].arid,
+                  cover: cover.images[0].thumbnails['500'],
+                  type: data[i].type
+               })    
+               
+               newtoprelease.save()                  
             })
+
+            i++
+
          }, 2000)
       })
    })
