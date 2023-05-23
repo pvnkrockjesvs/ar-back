@@ -5,6 +5,7 @@ var router = express.Router();
 const Profile = require("../models/profiles");
 const User = require("../models/users");
 const Artist = require("../models/artists");
+const Release = require('../models/releases');
 const lastapi = process.env.LASTFM_API
 
 router.post('/create', (req,res) => {   
@@ -69,6 +70,25 @@ router.get('/myartists/:token', (req, res) => {
             res.json({ result: true, artists, conflicts })
          } else {
             res.json({ result: true, error: 'No artists followed' })
+         }
+      })
+   })
+})
+
+router.get('/myreleases/:token', (req, res) => {
+   User.findOne({ token: req.params.token }).then((user) => {
+      Profile.findOne({ user: user.id}).populate("artists").then((profile) => {
+         if (profile.artists.length > 0) {
+            return Promise.all(profile.artists.map((data, i) => {
+               return Release.find({ arid: data.mbid }).then(dbreleases => {
+                  if (dbreleases !== null) {
+                     return dbreleases
+                  }
+               })
+            })).then((data) => {
+               data = data.filter((releases) => releases.length > 0)
+               res.json({ result: true, data })
+            })
          }
       })
    })
