@@ -43,7 +43,7 @@ router.get("/:mbid", (req, res) => {
           title: releasegroup.releases[0].title,
           label: releasegroup.releases[0]["label-info"][0].label.name,
           trackCount: releasegroup.releases[0].media[0]["track-count"],
-          genre: genre[0].name,
+          //genre: genre[0].name,
           albumLength,
           tracks,
         });
