@@ -89,6 +89,8 @@ router.get('/myreleases/:token', (req, res) => {
                data = data.filter((releases) => releases.length > 0)
                res.json({ result: true, data })
             })
+         } else {
+            res.json({ result: false, error: 'No artists followed'})
          }
       })
    })

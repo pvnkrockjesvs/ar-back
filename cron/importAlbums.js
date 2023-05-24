@@ -6,12 +6,14 @@ const Release = require('../models/releases');
 const Artist = require('../models/artists');
 const moment = require('moment')
 
+const not = 'NOT primarytype:other NOT secondarytype:compilation NOT secondarytype:live NOT secondarytype:soundtrack NOT secondarytype:spokenword NOT secondarytype:interview NOT secondarytype:audiobook NOT secondarytype:remix NOT secondarytype:demo NOT secondarytype:Mixtape/Street'
+
 Artist.find().then((artists) => {
    let i = 0
 
    const interv = setInterval(() => {
       fetch(`http://musicbrainz.org/ws/2/release-group?query=arid:${artists[i].mbid} 
-      AND status:official&limit=100&fmt=json`)
+      AND status:official&limit=100 ${not} &fmt=json`)
       .then(response => response.json()).then((mbalbums) => {
          console.log(mbalbums.name + ' ' + i)
          if (mbalbums.error) {

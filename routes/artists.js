@@ -10,7 +10,7 @@ const lastapi = process.env.LASTFM_API
 const fanartapi = process.env.FANART_API
 const url = 'http://musicbrainz.org/ws/2/'
 
-const not = 'NOT secondarytype:compilation NOT secondarytype:live NOT secondarytype:soundtrack NOT secondarytype:spokenword NOT secondarytype:interview NOT secondarytype:audiobook NOT secondarytype:remix NOT secondarytype:demo NOT secondarytype:Mixtape/Street'
+const not = 'NOT primarytype:other NOT secondarytype:compilation NOT secondarytype:live NOT secondarytype:soundtrack NOT secondarytype:spokenword NOT secondarytype:interview NOT secondarytype:audiobook NOT secondarytype:remix NOT secondarytype:demo NOT secondarytype:Mixtape/Street'
 
 /* fetch info artist */
 router.get('/:mbid', (req, res) => {
