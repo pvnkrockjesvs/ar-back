@@ -53,4 +53,28 @@ router.post("/spotify/album", async (req, res) => {
     });
 });
 
+//Route .post /spotify/album pour récupérer le lien deezer d'un album
+router.post("/deezer/album", async (req, res) => {
+  const searchQuery = `artist:"${req.body.artist}" album:"${req.body.album}"`;
+  const apiUrl = `https://api.deezer.com/search?q=${encodeURIComponent(
+    searchQuery
+  )}`;
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((albumData) => {
+      if (!albumData) {
+        res.json({ result: false, error: "No data found" });
+      } else if (albumData.data[0]) {
+        //console.log(albumData.data[0].album.tracklist); //pour obtenir le lien de la tracklist de l'album
+        res.json({ result: true, data: albumData.data[0].album });
+      }
+    })
+    .catch((error) => {
+      console.error(
+        "Une erreur s'est produite lors de la recherche Deezer:",
+        error
+      );
+    });
+});
+
 module.exports = router;
