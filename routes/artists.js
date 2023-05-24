@@ -23,7 +23,7 @@ router.get('/:mbid', (req, res) => {
          .then(response => response.json()).then((lastfmartist) => {
             fetch(`http://webservice.fanart.tv/v3/music/${req.params.mbid}?api_key=`+fanartapi)
             .then(response => response.json()).then((cover) => {
-               if(cover['error message']) {
+               if(cover['error message'] || !cover.artistbackground) {
                   const art = {
                      ended: artist['life-span'].ended,
                      name: artist.name,
