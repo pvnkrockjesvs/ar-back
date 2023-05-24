@@ -44,7 +44,7 @@ const url = 'http://musicbrainz.org/ws/2/release?release-group='
                         dbCount: data[i].count,
                         artist: data[i].artist,
                         arid: data[i].arid,
-                        cover: cover.images[0].thumbnails['500'],
+                        cover: cover.images[0].thumbnails.large,
                         type: data[i].type
                      })    
                      newtoprelease.save()             

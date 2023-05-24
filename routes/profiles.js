@@ -151,11 +151,13 @@ router.post('/import-last-fm', (req, res) => {
    })
 })
 
-// router.delete('/conflict', (req, res) => {
-//    User.findOne({ token: req.body.token }).then((user) => {
-//       // Profile.findOneAndDelete( {user: user.id}, {conflict: req.body.conflict}).then((profile) => {
-//       //    res.json({ result: true, profile})
-//       // })
-//    })
-// })
+router.delete('/conflict', (req, res) => {
+   User.findOne({ token: req.body.token }).then((user) => {
+      Profile.updateOne( {user: user.id}, {
+         $pull: { conflicts: req.body.conflict }
+      }).then((profile) => {
+         res.json({ result: true, profile})
+      })
+   })
+})
 module.exports = router;

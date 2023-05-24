@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const profileSchema = mongoose.Schema({
-   avatar: { type: String, default: 'https://www.pngkey.com/png/full/115-1150152_default-profile-picture-avatar-png-green.png' },
+   avatar: String,
    newsletter: Number,
    genres: { type: [String], default: [] },
    releaseTypes: [String],
