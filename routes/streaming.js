@@ -1,7 +1,6 @@
 var express = require("express");
 require("../models/connection");
 var router = express.Router();
-//const { getToken } = require("../modules/getToken");
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
