@@ -71,7 +71,6 @@ router.post('/signupconfirm', (req, res) => {
     return;
   }
 
-  console.log
   User.findOne({ username: req.body.username }).then((user) => {
     if (user === null) {
       const hash = bcrypt.hashSync(req.body.password, 10);
@@ -85,7 +84,6 @@ router.post('/signupconfirm', (req, res) => {
 
       newUser.save().then((userInfo) => {
         // send verification email
-        console.log('CONFIRMARTION:')
         const transporter = nodemailer.createTransport({
           host: process.env.HOST,
           port: process.env.PORT,
@@ -96,7 +94,6 @@ router.post('/signupconfirm', (req, res) => {
           }
         })
         let confirmationCode = userInfo.token
-        console.log('CONFIRMARTION:', confirmationCode)
         let mailOptions = {
           from: 'myemail4@ethereal.com',
           to: userInfo.email,
@@ -108,7 +105,6 @@ router.post('/signupconfirm', (req, res) => {
                 <a href=http://${req.headers.host}/confirm/${confirmationCode}> Click here</a>
                 </div>`,
         }
-        console.log('CONFIRMARTION:333', mailOptions.html)
         transporter.sendMail(mailOptions, function (err) {
           if (err) {
             res.json({ result: false, error: err});
