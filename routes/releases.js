@@ -50,7 +50,7 @@ router.get("/:mbid", (req, res) => {
           arid: releasegroup.releases[0]["artist-credit"][0].artist.id,
           date: releasegroup.releases[0].date,
           title: releasegroup.releases[0].title,
-          label: releasegroup.releases[0]["label-info"][0].label.name,
+          label,
           trackCount: releasegroup.releases[0].media[0]["track-count"],
           genre,
           albumLength,
