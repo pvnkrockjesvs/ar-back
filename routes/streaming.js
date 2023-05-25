@@ -50,6 +50,12 @@ router.post("/spotify/album", async (req, res) => {
         // console.log(albumData.albums.items[0].external_urls.spotify); //url spotify de l'album
         res.json({ result: true, data: albumData.albums.items });
       }
+    })
+    .catch((error) => {
+      console.error(
+        "Une erreur s'est produite lors de la recherche Spotify:",
+        error
+      );
     });
 });
 
