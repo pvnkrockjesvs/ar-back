@@ -65,7 +65,7 @@ Artist.find().then((artists) => {
             })
          }
       })
-      i < data.length - 1 ? i++ : clearInterval(interv)
+      i < artists.length - 1 ? i++ : clearInterval(interv)
    }, 700)
    
    

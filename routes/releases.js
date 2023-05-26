@@ -20,30 +20,39 @@ router.get("/:mbid", (req, res) => {
       } else {
         // console.log(releasegroup.releases[0]["artist-credit"][0].artist.id);
         let albumLength = 0;
+        let label, genre = []
         const tracks = releasegroup.releases[0].media[0].tracks.map(
           (data, i) => {
             albumLength += data.length;
             return { title: data.title, trackLength: data.length };
           }
         );
-        let genre = releasegroup.releases[0]["release-group"].genres.map(
-          (data, i) => {
-            return { name: data.name, count: data.count };
-          }
-        );
-        genre.sort(function (a, b) {
-          return new Date(b.count) - new Date(a.count);
-        });
-        genre = genre.slice(0, 1);
+        if (releasegroup.releases[0]["release-group"].genres) {
+          genre.push(releasegroup.releases[0]["release-group"].genres.map(
+            (data, i) => {
+              return { name: data.name, count: data.count };
+            }
+          ))
+          genre.sort(function (a, b) {
+            return new Date(b.count) - new Date(a.count);
+          });
+          genre = genre.slice(0, 1);
+        }
 
+        if (releasegroup.releases[0]["label-info"].length > 0) {
+          label = releasegroup.releases[0]["label-info"][0].label.name
+        }
+       
+
+        
         res.json({
           artist: releasegroup.releases[0]["artist-credit"][0].name,
           arid: releasegroup.releases[0]["artist-credit"][0].artist.id,
           date: releasegroup.releases[0].date,
           title: releasegroup.releases[0].title,
-          label: releasegroup.releases[0]["label-info"][0].label.name,
+          label,
           trackCount: releasegroup.releases[0].media[0]["track-count"],
-          //genre: genre[0].name,
+          genre,
           albumLength,
           tracks,
         });
