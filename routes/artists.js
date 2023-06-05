@@ -81,7 +81,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
             if (data) { 
                res.json({cover : data.images[0].thumbnails.large, mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})
             } else {
-               res
+               res.json({ mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})
             }
          })
       }

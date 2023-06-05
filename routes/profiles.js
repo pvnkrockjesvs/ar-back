@@ -17,16 +17,15 @@ router.post('/create', (req,res) => {
                newsletter: req.body.newsletter,
                genres: req.body.genres,
                releaseTypes: req.body.releaseTypes,
-               ical: req.body.ical,
-               rss: req.body.rss,
-               artists: req.body.artists,
-               albums: req.body.albums,
                user: user.id,
                isPremium: req.body.isPremium
             })
             newProfile.save().then((profile) => {
                res.json({result: true, profile})
             })
+         }
+         else {
+            res.json({result: false, error: "Profile already exists"})
          }
       })
    })
