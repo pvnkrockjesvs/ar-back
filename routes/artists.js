@@ -8,7 +8,7 @@ const Artist = require("../models/artists");
 
 const lastapi = process.env.LASTFM_API
 const fanartapi = process.env.FANART_API
-const url = 'http://musicbrainz.org/ws/2/'
+const url = 'https://musicbrainz.org/ws/2/'
 
 const not = 'NOT primarytype:other NOT secondarytype:compilation NOT secondarytype:live NOT secondarytype:soundtrack NOT secondarytype:spokenword NOT secondarytype:interview NOT secondarytype:audiobook NOT secondarytype:remix NOT secondarytype:demo NOT secondarytype:Mixtape/Street'
 
@@ -19,9 +19,9 @@ router.get('/:mbid', (req, res) => {
       if (artist.error) {
          res.json({ result: false, error: artist.error })
       } else {
-         fetch(`http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.name}&api_key=${lastapi}&format=json`)
+         fetch(`https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist.name}&api_key=${lastapi}&format=json`)
          .then(response => response.json()).then((lastfmartist) => {
-            fetch(`http://webservice.fanart.tv/v3/music/${req.params.mbid}?api_key=`+fanartapi)
+            fetch(`https://webservice.fanart.tv/v3/music/${req.params.mbid}?api_key=`+fanartapi)
             .then(response => response.json()).then((cover) => {
                if(cover['error message'] || !cover.artistbackground) {
                   const art = {
@@ -76,7 +76,7 @@ router.get('/:mbid/lastalbum', (req, res) => {
          album = album.filter(Boolean);
 
          album = album.slice( 0, 1 );
-         fetch(`http://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
+         fetch(`https://coverartarchive.org/release-group/${album[0].id}?fmt=json`)
          .then(response => response.json()).then((data) => {
             if (data) { 
                res.json({cover : data.images[0].thumbnails.large, mbid: album[0].id, date: album[0]['first-release-date'], title: album[0].title})

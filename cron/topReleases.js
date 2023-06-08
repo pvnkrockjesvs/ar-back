@@ -9,7 +9,7 @@ var cron = require('node-cron');
 
 const Artist = require('../models/artists');
 const moment = require('moment')
-const url = 'http://musicbrainz.org/ws/2/release?release-group='
+const url = 'https://musicbrainz.org/ws/2/release?release-group='
 
 //cron.schedule('*/10 * * * *'), () => {
    TopRelease.deleteMany({}).then(
@@ -35,7 +35,7 @@ const url = 'http://musicbrainz.org/ws/2/release?release-group='
 
             let i = 0
             const interv = setInterval(async () => { 
-               await fetch(`http://coverartarchive.org/release-group/${data[i].album}?fmt=json`)
+               await fetch(`https://coverartarchive.org/release-group/${data[i].album}?fmt=json`)
                   .then(response => response.json()).then((cover) => {
                      const newtoprelease = new TopRelease({
                         mbid : data[i].album,

@@ -69,7 +69,7 @@ router.get('/myartists/:token', (req, res) => {
             })
             res.json({ result: true, artists, conflicts })
          } else {
-            res.json({ result: true, error: 'No artists followed' })
+            res.json({ result: false, error: 'No artists followed' })
          }
       })
    })

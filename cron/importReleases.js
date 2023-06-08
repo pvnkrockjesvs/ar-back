@@ -12,7 +12,7 @@ Artist.find().then((artists) => {
    let i = 0
 
    const interv = setInterval(() => {
-      fetch(`http://musicbrainz.org/ws/2/release-group?query=arid:${artists[i].mbid} 
+      fetch(`https://musicbrainz.org/ws/2/release-group?query=arid:${artists[i].mbid} 
       AND status:official&limit=100 ${not} &fmt=json`)
       .then(response => response.json()).then((mbalbums) => {
          console.log(mbalbums.name + ' ' + i)

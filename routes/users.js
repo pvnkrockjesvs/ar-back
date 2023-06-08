@@ -102,7 +102,7 @@ router.post('/signupconfirm', (req, res) => {
                 <h1>Email Confirmation</h1>
                 <h2>Hello ${userInfo.username}</h2>
                 <p>Thank you for subscribing. Please verify your email account by clicking on the following link</p>
-                <a href=http://${req.headers.host}/confirm/${confirmationCode}> Click here</a>
+                <a href=https://${req.headers.host}/confirm/${confirmationCode}> Click here</a>
                 </div>`,
         }
         transporter.sendMail(mailOptions, function (err) {
